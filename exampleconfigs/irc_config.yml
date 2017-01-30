@@ -1,0 +1,5 @@
+server: "localhost"  
+login: "login"  
+pass: "password"  
+nick: "nickname"  
+port: 123456

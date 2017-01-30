@@ -45,3 +45,9 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.project
+.classpath
+.settings
+bin
+/bot_config.yml
+/irc_config.yml

@@ -1,0 +1,9 @@
+channelName: "#channel1"
+botUsername: Bot123
+botToken: 123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR
+telegramChatID: 12341234
+---
+channelName: "#channel2"
+botUsername: Bot456
+botToken: 123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR
+telegramChatID: 12341234
