@@ -1,11 +1,11 @@
 # IRC-to-Telegram 
 IRC-to-Telegram is small tool to interact with an IRC channel via Telegram.
 This is still an early WIP and very experimental. You'll achieve the best result in combination with an IRC Bouncer (for example ZNC)
-# How does it work  
+## How does it work  
 When using IRC-to-Telegram you'll end up in Bot in Telegram for every channel. If the channels are spread on multiple servers, you (currently) need to run multiple instances of IRC-to-Telegram. All messages in each channel will be send directly to you via the Bot. When you respond to the Bot, the message will be send as an IRC Message to the IRC channel.  
 The Bot will will only interact to Telegram Account, that is set in the configuration file.  
 
-# How to setup  
+## How to setup  
 This tool has only been tested in combination with an IRC Bouncer and through an HTTP Connection. HTTPS connections are currently not supported.
 
 ## Configuration  
@@ -50,11 +50,11 @@ Each channel is seperated by an "---".
 **botUsername**: and **botToken** are the bot data you'll get while creating a bot.  
 **telegramChatID**: is the chatID the bot will interact with. All other Telegram account will be ignored from the bot. If you don't know your ChatID, just enter any ChatID and try to contact the bot. It should throw you an error message including your chatID.
 
-# Running it  
+## Running it  
 Once you have set the config files, you can simply execute the .jar.  
 More Settings are avaible in the */utils/Settings.java*. The message layout can be changed in */utils/TelegramStrings.java*
 
-### Commands  
+## Commands  
 Currently this tool is very basic. It just redirecting the messages from A to B and from B to A.  
 Only simple text can be exchanged, this means:
 - Private Messages are not possible
@@ -65,11 +65,11 @@ But you can use other commands:
 -"/listuser" - Sends you a list of all people in the channel
 
 
-### Aren't the Telegram bots public? Can everbody see my messages?  
+## Aren't the Telegram bots public? Can everbody see my messages?  
 Telegram Bots are in fact public, but this tool only intacts with one Telegram Account which can be set for each channel.  
 All other people who try to contact the Bot will only get an error message and will never receive any other message.
 
-### Credits 
+## Credits 
 Coding - Maschell  
 Libraries used (Huge thanks!)  
 Java Telegram API - https://github.com/rubenlagus/TelegramBotsExample  
