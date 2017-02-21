@@ -28,7 +28,9 @@ import java.util.List;
 import org.telegram.telegrambots.api.methods.GetFile;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.File;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.PhotoSize;
+import org.telegram.telegrambots.api.objects.Sticker;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -117,10 +119,22 @@ public class IRCChannelBot extends TelegramLongPollingBot {
         }
        
         @Override
-        public void onUpdateReceived(Update update) {            
-            if (update.hasMessage() && isFromValidUser(update.getMessage().getChatId())) {
-                if(update.getMessage().hasText()){
-                    String text = update.getMessage().getText();
+        public void onUpdateReceived(Update update) {
+            System.out.println(update);
+            if (update.hasMessage() || update.hasEditedMessage()) {
+                String prefix = "";
+                Message message = update.getMessage();
+                if(update.hasEditedMessage()){
+                    message = update.getEditedMessage();
+                    prefix = "*";
+                }
+                if(!isFromValidUser(message.getChatId())){
+                    return;
+                }
+                    
+                if(message.hasText()){
+                    
+                    String text = message.getText();
                     String[] lines = text.split(" ");
                     switch(lines[0].toLowerCase()){
                         case CommandsDefs.LIST_USER:
@@ -130,12 +144,20 @@ public class IRCChannelBot extends TelegramLongPollingBot {
                             setUserForPrivateMessageResponses(text.substring(CommandsDefs.SET_USER.length()+1));
                             break;
                         default:
-                            sendTelegramMessageToIRC(text);
+                            Message replyTo = message.getReplyToMessage();
+                            if(replyTo != null && replyTo.hasText()){
+                                text = replyTo.getText() + " <- " + text;
+                            }
+                            sendTelegramMessageToIRC(prefix + text);
                             break;
                     } 
                 }
-                if(update.getMessage().hasPhoto()){
-                   processImage(update.getMessage().getPhoto());
+                if(message.hasPhoto()){
+                   processImage(message.getPhoto());
+                }
+                Sticker s = null;
+                if((s = message.getSticker()) != null){
+                    //sendImageByFileID(s.getFileId()); Not working. it's a webp =(
                 }
             }else{
                 if(update.hasMessage()){
@@ -147,32 +169,37 @@ public class IRCChannelBot extends TelegramLongPollingBot {
                     }
                 }
             }
+            
         }
 
         private void processImage(List<PhotoSize> photos){
+            if(photos == null || photos.isEmpty()){
+                return;
+            }
+            int maxSize = 0;
+            String fileID = "";
+            
+            for(PhotoSize photo : photos){
+                if(photo.getFileSize() > maxSize){
+                    maxSize = photo.getFileSize();
+                    fileID = photo.getFileId();
+                }
+            }
+            sendImageByFileID(fileID);
+        }
+        
+        private void sendImageByFileID(String fileID){
             FileInputStream fileInputStream = null;
-            try {
-                if(photos == null || photos.isEmpty()){
-                    return;
-                }
-                int maxSize = 0;
-                String fileID = "";
-                
-                for(PhotoSize photo : photos){
-                    if(photo.getFileSize() > maxSize){
-                        maxSize = photo.getFileSize();
-                        fileID = photo.getFileId();
-                    }
-                }
+            try {               
                 GetFile getFileRequest = new GetFile();
 
                 getFileRequest.setFileId(fileID);
                 File file = getFile(getFileRequest);
-                
+                                
                 java.io.File fileFromSystem = downloadFile(file.getFilePath());
-
+                
                 byte[] bytes = Files.toByteArray(fileFromSystem);
-               
+                
                 sendTelegramMessageToIRC(ImgurUploader.uploadImageAndGetLink(bytes));
             } catch (TelegramApiException e) {
                 e.printStackTrace();
