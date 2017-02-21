@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import de.mas.telegramircbot.telegram.CommandsDefs;
 import de.mas.telegramircbot.utils.Settings;
 import de.mas.telegramircbot.utils.SimpleLogger;
 import de.mas.telegramircbot.utils.TelegramStrings;
 import lombok.Getter;
-import lombok.Setter;
 
 public class IRCChannel {
     @Getter private final String channelName;

@@ -201,8 +201,7 @@ public class IRCServer implements Runnable{
                             case "QUIT":
                                 recv_quit(username);
                                 break;
-                            case "PRIVMSG":          
-                                System.out.println(line);
+                            case "PRIVMSG":
                                 String channelname = message[2];
                                 String textmessage = line.split(channelname + " :")[1];
                                 PRIVMSG(channelname,username,textmessage);
