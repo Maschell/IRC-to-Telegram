@@ -120,7 +120,6 @@ public class IRCChannelBot extends TelegramLongPollingBot {
        
         @Override
         public void onUpdateReceived(Update update) {
-            System.out.println(update);
             if (update.hasMessage() || update.hasEditedMessage()) {
                 String prefix = "";
                 Message message = update.getMessage();
