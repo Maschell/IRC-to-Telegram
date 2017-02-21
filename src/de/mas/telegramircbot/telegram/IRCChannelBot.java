@@ -1,22 +1,54 @@
-package de.mas.telegramircbot.telegram;
-import java.io.IOException;
+/*******************************************************************************
+ * Copyright (c) 2017 Maschell
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *******************************************************************************/
 
+package de.mas.telegramircbot.telegram;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
+
+import org.telegram.telegrambots.api.methods.GetFile;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.File;
+import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+
+import com.google.common.io.Files;
 
 import de.mas.telegramircbot.irc.IRCChannel;
 import de.mas.telegramircbot.irc.IRCMessage;
 import de.mas.telegramircbot.irc.IRCServer;
 import de.mas.telegramircbot.utils.TelegramStrings;
 import de.mas.telegramircbot.utils.Utils;
+import de.mas.telegramircbot.utils.images.ImgurUploader;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
 
 @Log
-public class IRCChannelBot extends TelegramLongPollingBot {        
+public class IRCChannelBot extends TelegramLongPollingBot {
+        public static final String FILE_API = "https://api.telegram.org/file/bot";
+    
         @Getter private final IRCChannel channel;
         @Getter private final String botUsername;
         @Getter private final String botToken;
@@ -89,14 +121,21 @@ public class IRCChannelBot extends TelegramLongPollingBot {
             if (update.hasMessage() && isFromValidUser(update.getMessage().getChatId())) {
                 if(update.getMessage().hasText()){
                     String text = update.getMessage().getText();
-                    switch(text.toLowerCase()){
+                    String[] lines = text.split(" ");
+                    switch(lines[0].toLowerCase()){
                         case CommandsDefs.LIST_USER:
                             sendIRCUserListToTelegram();
+                            break;
+                        case CommandsDefs.SET_USER:
+                            setUserForPrivateMessageResponses(text.substring(CommandsDefs.SET_USER.length()+1));
                             break;
                         default:
                             sendTelegramMessageToIRC(text);
                             break;
                     } 
+                }
+                if(update.getMessage().hasPhoto()){
+                   processImage(update.getMessage().getPhoto());
                 }
             }else{
                 if(update.hasMessage()){
@@ -110,6 +149,49 @@ public class IRCChannelBot extends TelegramLongPollingBot {
             }
         }
 
+        private void processImage(List<PhotoSize> photos){
+            FileInputStream fileInputStream = null;
+            try {
+                if(photos == null || photos.isEmpty()){
+                    return;
+                }
+                int maxSize = 0;
+                String fileID = "";
+                
+                for(PhotoSize photo : photos){
+                    if(photo.getFileSize() > maxSize){
+                        maxSize = photo.getFileSize();
+                        fileID = photo.getFileId();
+                    }
+                }
+                GetFile getFileRequest = new GetFile();
+
+                getFileRequest.setFileId(fileID);
+                File file = getFile(getFileRequest);
+                
+                java.io.File fileFromSystem = downloadFile(file.getFilePath());
+
+                byte[] bytes = Files.toByteArray(fileFromSystem);
+               
+                sendTelegramMessageToIRC(ImgurUploader.uploadImageAndGetLink(bytes));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }finally{
+                if(fileInputStream != null){
+                    try {
+                        fileInputStream.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
+
+        private void setUserForPrivateMessageResponses(String username) {
+           getChannel().setUsernameToRespond(username);
+        }
+
         private boolean isFromValidUser(Long chatId) {
             return(chatId == getTelegramChatID());
         }
@@ -118,6 +200,7 @@ public class IRCChannelBot extends TelegramLongPollingBot {
             try {
                 for(String s : text.split("\\n|\\r")){ //Split up lines into single messages
                     s = Utils.replacesSmileys(s);
+                    
                     getChannel().sendTextMessageToChannel(s);
                 }                
             } catch (IOException e) {

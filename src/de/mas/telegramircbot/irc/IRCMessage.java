@@ -25,6 +25,12 @@ public class IRCMessage implements Comparable<IRCMessage>{
     private IRCMessage(String user) {
         this(user,"");
     }
+    
+    public static IRCMessage createSystemMessage(String message){
+        IRCMessage result = new IRCMessage("",message);
+        result.setMessageType(MessageTypes.SystemMessage);
+        return result;
+    }
 
     public static IRCMessage createTextMessage(String user,String message){
         IRCMessage result = new IRCMessage(user,message);
@@ -52,6 +58,8 @@ public class IRCMessage implements Comparable<IRCMessage>{
                 return String.format(TelegramStrings.JOIN_MESSAGE, user);
             case LeaveMessage:
                 return String.format(TelegramStrings.LEAVE_MESSAGE, user);
+            case SystemMessage:
+                return String.format(TelegramStrings.SYSTEM_MESSAGE, message);
             default:
                 return String.format(TelegramStrings.TEXT_MESSAGE, user,message);         
         }       
@@ -70,6 +78,7 @@ public class IRCMessage implements Comparable<IRCMessage>{
     public enum MessageTypes{
         TextMessage,
         JoinMessage,
-        LeaveMessage
+        LeaveMessage,
+        SystemMessage
     }
 }

@@ -50,4 +50,6 @@ Temporary Items
 .settings
 bin
 /bot_config.yml
+/api_config.yml
 /irc_config.yml
+/target/

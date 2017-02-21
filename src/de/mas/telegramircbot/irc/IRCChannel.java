@@ -5,16 +5,26 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import de.mas.telegramircbot.telegram.CommandsDefs;
+import de.mas.telegramircbot.utils.Settings;
+import de.mas.telegramircbot.utils.SimpleLogger;
 import de.mas.telegramircbot.utils.TelegramStrings;
 import lombok.Getter;
+import lombok.Setter;
 
 public class IRCChannel {
     @Getter private final String channelName;
     @Getter private final IRCServer server;
     
+    @Getter
+    private String usernameToRespond = "";
+    
     public IRCChannel(IRCServer server, String channelName) {
         this.server = server;
         this.channelName = channelName;
+        if(channelName.equalsIgnoreCase(Settings.PRIVATE_MESSAGES_CHANNEL_NAME)){
+            sendMessageToTelegram(IRCMessage.createSystemMessage(TelegramStrings.PRIVATE_MESSAGE_BOT_STARTED));
+        }
     }
     
     @Getter private List<String> userList = new ArrayList<>();
@@ -57,6 +67,7 @@ public class IRCChannel {
     }
     
     @Getter private Queue<IRCMessage> messages = new ConcurrentLinkedQueue<IRCMessage>();
+   
     public void sendMessageToTelegram(IRCMessage m) {
         
         getMessages().add(m);
@@ -73,5 +84,18 @@ public class IRCChannel {
             sb.append(s + " ");
         }
         return sb.toString();
+    }
+
+    public void setUsernameToRespond(String username){
+        if(!usernameToRespond.equalsIgnoreCase(username)){
+            this.usernameToRespond = username;
+            SimpleLogger.log("All messages will now be sent to: " + username);
+            sendMessageToTelegram(IRCMessage.createSystemMessage("All messages will now be sent to: " + username));
+        }
+    }
+
+    public void sendPrivateMessageToTelegram(String username, String text) {
+        sendMessageToTelegram(IRCMessage.createTextMessage(username, text));
+        setUsernameToRespond(username);
     }
 }

@@ -12,12 +12,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.mas.telegramircbot.utils.Settings;
 import de.mas.telegramircbot.utils.SimpleLogger;
+import de.mas.telegramircbot.utils.TelegramStrings;
 import de.mas.telegramircbot.utils.Utils;
 import lombok.extern.java.Log;
 
 @Log
 public class IRCServer implements Runnable{    
+  
     private static IRCServer server = null;
     private static IRCServer getServer(IRCConfig ircConfig){
         if(server == null){
@@ -96,7 +99,9 @@ public class IRCServer implements Runnable{
         String channel_name = channelName.toLowerCase();
         if(!channels.containsKey(channel_name)){
             try {
-                do_join_channel(channel_name);
+                if(!channel_name.equalsIgnoreCase(Settings.PRIVATE_MESSAGES_CHANNEL_NAME)){
+                    do_join_channel(channel_name);
+                }
             } catch (IOException e) {
             }
             channels.put(channel_name, new IRCChannel(this,channel_name));
@@ -196,7 +201,8 @@ public class IRCServer implements Runnable{
                             case "QUIT":
                                 recv_quit(username);
                                 break;
-                            case "PRIVMSG":                                
+                            case "PRIVMSG":          
+                                System.out.println(line);
                                 String channelname = message[2];
                                 String textmessage = line.split(channelname + " :")[1];
                                 PRIVMSG(channelname,username,textmessage);
@@ -217,11 +223,12 @@ public class IRCServer implements Runnable{
                             List<String> user = new ArrayList<String>();
                            
                             for(int i = 5; i< message.length;i++){
+                                String username = message[i];
                                 if(message[i].startsWith(":")){
-                                    user.add(message[i].substring(1));
-                                }else{
-                                    user.add(message[i]);
+                                    message[i].substring(1);
                                 }
+                                username = Utils.escapeUsername(username);
+                                user.add(username);
                             }
                             recv_RPL_NAMREPLY(channel,user);
                             break;
@@ -231,6 +238,12 @@ public class IRCServer implements Runnable{
                             }
                             channel = message[3];
                             recv_RPL_ENDOFNAMES(channel);
+                            break;
+                        case 401: //  RPL_ENDOFNAMES
+                            if(message.length < 4){
+                                break;
+                            }
+                            getChannel(Settings.PRIVATE_MESSAGES_CHANNEL_NAME).sendMessageToTelegram(IRCMessage.createSystemMessage(String.format(TelegramStrings.USER_NOT_FOUND_MESSAGE, message[3])));
                             break;
                         default:
                             SimpleLogger.log(line);
@@ -252,8 +265,13 @@ public class IRCServer implements Runnable{
     }
     
     private void PRIVMSG(String channel, String username, String text) throws IOException {
-        SimpleLogger.log(channel + " - " + username + ": " + text);
-        getChannel(channel).sendMessageToTelegram(IRCMessage.createTextMessage(username, text));
+        if(channel.startsWith("#")){ //It's in a real channel
+            SimpleLogger.log(channel + " - " + username + ": " + text);
+            getChannel(channel).sendMessageToTelegram(IRCMessage.createTextMessage(username, text));
+        }else{//Is a private message. TODO: don't use the IRCChannel, but an own class.
+            SimpleLogger.log("Private Message from " + username + ": " + text);
+            getChannel(Settings.PRIVATE_MESSAGES_CHANNEL_NAME).sendPrivateMessageToTelegram(username,text);
+        }
     }
 
     private void recv_RPL_NAMREPLY(String channel, List<String> user) {
@@ -294,8 +312,16 @@ public class IRCServer implements Runnable{
      * Sending messages wrapper
      */
     public void sendTextMessageToChannel(IRCChannel channel, String text) throws IOException {
-        sendMessage("PRIVMSG " + channel.getChannelName() +" :" + text);
-        SimpleLogger.log(">" + channel.getChannelName() + ": " + text);
+        if(channel.getChannelName().equalsIgnoreCase(Settings.PRIVATE_MESSAGES_CHANNEL_NAME)){
+            if(channel.getUsernameToRespond() != null && !channel.getUsernameToRespond().isEmpty()){
+                sendMessage("PRIVMSG " + channel.getUsernameToRespond() +" :" + text);
+            }else{
+                channel.sendMessageToTelegram(IRCMessage.createSystemMessage(TelegramStrings.NO_USERNAME_SET));
+            }
+        }else{
+            sendMessage("PRIVMSG " + channel.getChannelName() +" :" + text);
+            SimpleLogger.log(">" + channel.getChannelName() + ": " + text);
+        }
     }
 
     private void sendMessage(String message) throws IOException {

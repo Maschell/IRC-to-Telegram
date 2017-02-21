@@ -43,6 +43,11 @@ channelName: "#channel2"
 botUsername: Bot456
 botToken: 123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR
 telegramChatID: 12341234
+---
+channelName: "PRIVATE_MESSAGES"
+botUsername: Bot789
+botToken: 123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR
+telegramChatID: 12341234
 ```
 Each channel is seperated by an "---".  
  
@@ -50,9 +55,21 @@ Each channel is seperated by an "---".
 **botUsername**: and **botToken** are the bot data you'll get while creating a bot.  
 **telegramChatID**: is the chatID the bot will interact with. All other Telegram account will be ignored from the bot. If you don't know your ChatID, just enter any ChatID and try to contact the bot. It should throw you an error message including your chatID.
 
+# Private Messages
+For private messages, an own Telegram bot is needed. This bot has to be set to the channel "PRIVATE_MESSAGES" (can be changed in the Settings.java).  
+To write a private message to a specific user, you need to set the bot to this user first. This can be done via sending a message containing "/setUser <username>" to the Bot (without the <> obviously). If you get a private message, the user will be set automatically to this sender.
+
 # Running it  
 Once you have set the config files, you can simply execute the .jar.  
 More Settings are avaible in the */utils/Settings.java*. The message layout can be changed in */utils/TelegramStrings.java*
+
+# Sending images via Telegram
+When you send an image via Telegram, this images will be automatically uploaded the imgur and convert to a link. This link will be posted in IRC channel.  
+Before you can do this, you need to set your imgur client id. This can be done in the Settings.java, or in a config file called "api_config.yml". Example:  
+
+```
+imgurClientID: "abcdefg12345678"
+```
 
 ### Commands  
 Currently this tool is very basic. It just redirecting the messages from A to B and from B to A.  
