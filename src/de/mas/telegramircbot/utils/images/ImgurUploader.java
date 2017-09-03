@@ -24,6 +24,7 @@ package de.mas.telegramircbot.utils.images;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -31,22 +32,32 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Base64;
 
+import org.apache.commons.io.IOUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import de.mas.telegramircbot.utils.Settings;
 
-public class ImgurUploader { 
-    
-    public static String uploadImageAndGetLink(byte[] image) throws IOException {
-        return uploadImageAndGetLink(Settings.IMGUR_API_CLIENTID,image);
+public class ImgurUploader {
+
+    public static String uploadImageAndGetLink(InputStream is) throws IOException {
+        return uploadImageAndGetLink(IOUtils.toByteArray(is));
     }
-    
-    public static String uploadImageAndGetLink(String clientID,byte[] image) throws IOException{
+
+    public static String uploadImageAndGetLink(byte[] image) throws IOException {
+        return uploadImageAndGetLink(Settings.IMGUR_API_CLIENTID, image);
+    }
+
+    public static String uploadImageAndGetLink(String clientID, InputStream is) throws IOException {
+        return uploadImageAndGetLink(clientID, IOUtils.toByteArray(is));
+    }
+
+    public static String uploadImageAndGetLink(String clientID, byte[] image) throws IOException {
         URL url;
         url = new URL(Settings.IMGUR_API_URL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        
+
         String dataImage = Base64.getEncoder().encodeToString(image);
         String data = URLEncoder.encode("image", "UTF-8") + "=" + URLEncoder.encode(dataImage, "UTF-8");
 
@@ -55,8 +66,7 @@ public class ImgurUploader {
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Authorization", "Client-ID " + clientID);
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type",
-                "application/x-www-form-urlencoded");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
         conn.connect();
         StringBuilder stb = new StringBuilder();
@@ -72,19 +82,20 @@ public class ImgurUploader {
         }
         wr.close();
         rd.close();
-        
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(ImgurResponse.class, new ImgurResponseDeserializer());
         Gson gson = gsonBuilder.create();
 
         // The JSON data
-        try{
+        try {
             ImgurResponse response = gson.fromJson(stb.toString(), ImgurResponse.class);
             return response.getLink();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return stb.toString();
     }
+
 }

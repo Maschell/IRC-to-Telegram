@@ -20,14 +20,36 @@
  * SOFTWARE.
  *******************************************************************************/
 
-package de.mas.telegramircbot.telegram;
+package de.mas.telegramircbot.irc.implementations;
 
+import de.mas.telegramircbot.common.DefaultMessageReturned;
+import de.mas.telegramircbot.common.interfaces.Message;
+import de.mas.telegramircbot.common.interfaces.MessageReturned;
+import de.mas.telegramircbot.common.interfaces.MessageSender;
+import de.mas.telegramircbot.irc.IRCServer;
+import de.mas.telegramircbot.message.Document;
+import de.mas.telegramircbot.message.User;
 import lombok.Data;
 
 @Data
-public class BotConfig {
-    private final String channelName;
-    private final String botUsername;
-    private final String botToken;
-    private final long telegramChatID;
+public class IRCMessageSender implements MessageSender {
+    private final IRCServer server;
+    private final String target;
+
+    @Override
+    public MessageReturned sendFile(Document d) throws Exception {        
+        return null;
+    }
+
+    @Override
+    public MessageReturned sendTextMessage(String formattedString) throws Exception {        
+        server.sendMessage("PRIVMSG " + getTarget() + " :" + formattedString);
+        return new DefaultMessageReturned(new IRCMessage(new User(""), ""));
+    }
+
+    @Override
+    public MessageReturned editMessage(Message toID, String newContent) throws Exception {        
+        return null;
+    }
+
 }

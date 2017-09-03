@@ -34,10 +34,10 @@ public class ImgurResponseDeserializer implements JsonDeserializer<ImgurResponse
     @Override
     public ImgurResponse deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
         final String link = json.getAsJsonObject().get("data").getAsJsonObject().get("link").getAsString();
-        
+
         final ImgurResponse response = new ImgurResponse();
         response.setLink(link);
-        
+
         return response;
     }
 }

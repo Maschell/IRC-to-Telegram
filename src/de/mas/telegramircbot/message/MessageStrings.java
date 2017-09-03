@@ -20,14 +20,15 @@
  * SOFTWARE.
  *******************************************************************************/
 
-package de.mas.telegramircbot.utils;
+package de.mas.telegramircbot.message;
 
-import de.mas.telegramircbot.telegram.CommandsDefs;
+import de.mas.telegramircbot.telegram.common.CommandsDefs;
 
-public class TelegramStrings {
+public class MessageStrings {
     public static final String PEOPLE_IN_CHANNEL = "In %s are the following people: ";  // 1 param  (%s) channel name
     public static final String BOT_ONLINE = "Bot started: %s";                          // 1 param  (%s) channel name
-    public static final String TEXT_MESSAGE = "<%s> %s";                                // 2 params (%s,%s) user name,message
+    public static final String TEXT_MESSAGE_FROM_USER = "<%s> %s";                      // 2 params (%s,%s) user name,message
+    public static final String TEXT_MESSAGE = "%s";                                     // 1 param  (%s) message
     public static final String JOIN_MESSAGE = "%s has joined";                          // 1 param  (%s) user name
     public static final String LEAVE_MESSAGE = "%s has left";                           // 1 param  (%s) user name
     public static final String USER_NOT_FOUND_MESSAGE = "User not found: %s";           // 1 param  (%s) user name
@@ -35,4 +36,5 @@ public class TelegramStrings {
     public static final String SYSTEM_MESSAGE = "SYSTEM: %s";                           // 1 param  (%s) message
     public static final String PRIVATE_MESSAGE_BOT_STARTED = "No username set. Please set a username which will receive the private messages with \"" + CommandsDefs.SET_USER_HELP+ "\"";
     public static final String NO_USERNAME_SET = "No username set.";
+    public static final String EDITED_MESSAGE_FROM_USER = "*<%s> %s";                   // 2 params (%s,%s) user name,message
 }

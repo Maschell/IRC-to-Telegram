@@ -53,3 +53,4 @@ bin
 /api_config.yml
 /irc_config.yml
 /target/
+discord_config.yml

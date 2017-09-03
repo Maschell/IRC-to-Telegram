@@ -19,28 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
+package de.mas.telegramircbot.telegram.common;
 
-package de.mas.telegramircbot.utils;
-
-public class Settings {
-    public static final String BOT_CONFIG_FILE = "bot_config.yml";
-    public static final String IRC_CONFIG_FILE = "irc_config.yml";
-    public static final String API_CONFIG_FILE = "api_config.yml";
-    public static final String DISCORD_CONFIG_FILE = "discord_config.yml";
-
-    public static final boolean SIMPLE_LOGGING_ENABLED = true;
-
-    // Will be used if no config is provided.
-    public static String IRC_SERVER = "localhost";
-    public static String IRC_LOGIN = "<login>";
-    public static String IRC_PASS = "<password>";
-    public static String IRC_NICK = "<nick>";
-    public static int IRC_PORT = 12345;
-
-    public static final String PRIVATE_MESSAGES_CHANNEL_NAME = "PRIVATE_MESSAGES"; // This must not start with #
-    public static final Object MENTIONS_CHANNEL_NAME = "SERVER_MENTIONS";
-    public static String IMGUR_API_CLIENTID = "";
-    public static final String IMGUR_API_URL = "https://api.imgur.com/3/image";
-
-
+public class CommandsDefs {
+    public static final String LIST_USER = "/listuser";
+    public static final String SET_USER = "/setuser";
+    public static final String SET_USER_HELP = SET_USER + " <username>";
 }

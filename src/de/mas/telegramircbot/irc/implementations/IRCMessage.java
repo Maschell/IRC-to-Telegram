@@ -20,50 +20,38 @@
  * SOFTWARE.
  *******************************************************************************/
 
-package de.mas.telegramircbot.utils;
+package de.mas.telegramircbot.irc.implementations;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class Utils {
-    public static String replacesSmileys(String s) {
-        s = s.replaceAll("\\ud83d\\ude06", "xD"); // 😆
-        s = s.replaceAll("\\ud83d\\ude4a", ":X"); // 🙊
-        s = s.replaceAll("\u2764", "<3");         // ❤️
-        return s;
+import de.mas.telegramircbot.common.interfaces.Attachment;
+import de.mas.telegramircbot.common.interfaces.Message;
+import de.mas.telegramircbot.message.User;
+import lombok.Data;
+
+@Data
+public class IRCMessage implements Message {
+    private final User author;
+    private final String content;
+
+    @Override
+    public Collection<Attachment> getAttachments() {
+        return new ArrayList<>();
     }
 
-    // To get rid of the try catch thing..
-    public static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            // And ignore the exception. ups.
-        }
+    @Override
+    public String getID() {
+        return "IRC";
     }
 
-    public static boolean isNumeric(String string) {
-        boolean isValue = false;
-        try {
-            Integer.parseInt(string);
-            isValue = true;
-        } catch (NumberFormatException e) {
-        }
-        return isValue;
+    @Override
+    public boolean hasTextContent() {
+        return (content != null && !content.isEmpty());
     }
 
-    public static String escapeUsername(String username) {
-        return username.replace("@", "").replace("+", "");
-    }
-
-    /**
-     * 
-     * @param input
-     * @param replace
-     * @param replaceWith
-     * @return
-     */
-    public static String replaceStringInStringEscaped(String input, String replace, String replaceWith) {
-        return input.replaceAll(Pattern.quote(replace), Matcher.quoteReplacement(replaceWith));
+    @Override
+    public Object getInternalMessage() {
+        return this;
     }
 }

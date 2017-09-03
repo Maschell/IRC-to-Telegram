@@ -19,10 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
-package de.mas.telegramircbot.telegram;
 
-public class CommandsDefs {
-    public static final String LIST_USER = "/listuser";
-    public static final String SET_USER = "/setuser";
-    public static final String SET_USER_HELP = SET_USER + " <username>";
+package de.mas.telegramircbot.common.interfaces;
+
+public interface Channel extends ChannelToChannelCommunication {
+    public String getChannelName();
 }

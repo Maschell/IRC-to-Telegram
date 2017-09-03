@@ -19,28 +19,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *******************************************************************************/
+package de.mas.telegramircbot.utils.config;
 
-package de.mas.telegramircbot.utils;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Settings {
-    public static final String BOT_CONFIG_FILE = "bot_config.yml";
-    public static final String IRC_CONFIG_FILE = "irc_config.yml";
-    public static final String API_CONFIG_FILE = "api_config.yml";
-    public static final String DISCORD_CONFIG_FILE = "discord_config.yml";
+import lombok.Data;
 
-    public static final boolean SIMPLE_LOGGING_ENABLED = true;
-
-    // Will be used if no config is provided.
-    public static String IRC_SERVER = "localhost";
-    public static String IRC_LOGIN = "<login>";
-    public static String IRC_PASS = "<password>";
-    public static String IRC_NICK = "<nick>";
-    public static int IRC_PORT = 12345;
-
-    public static final String PRIVATE_MESSAGES_CHANNEL_NAME = "PRIVATE_MESSAGES"; // This must not start with #
-    public static final Object MENTIONS_CHANNEL_NAME = "SERVER_MENTIONS";
-    public static String IMGUR_API_CLIENTID = "";
-    public static final String IMGUR_API_URL = "https://api.imgur.com/3/image";
-
+@Data
+public class DiscordConfig {
+    private String username;
+    private String password;
+    private Map<String, TelegramConfig> channelList = new HashMap<>();
 
 }

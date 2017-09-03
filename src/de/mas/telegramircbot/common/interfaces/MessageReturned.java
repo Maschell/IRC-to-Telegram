@@ -20,11 +20,8 @@
  * SOFTWARE.
  *******************************************************************************/
 
-package de.mas.telegramircbot.utils;
+package de.mas.telegramircbot.common.interfaces;
 
-import lombok.Data;
-
-@Data
-public class APIConfig {
-    private String imgurClientID;
+public interface MessageReturned {
+    Message getMessage();
 }

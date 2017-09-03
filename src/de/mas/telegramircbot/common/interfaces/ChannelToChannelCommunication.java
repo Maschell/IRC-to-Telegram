@@ -20,27 +20,20 @@
  * SOFTWARE.
  *******************************************************************************/
 
-package de.mas.telegramircbot.utils;
+package de.mas.telegramircbot.common.interfaces;
 
-public class Settings {
-    public static final String BOT_CONFIG_FILE = "bot_config.yml";
-    public static final String IRC_CONFIG_FILE = "irc_config.yml";
-    public static final String API_CONFIG_FILE = "api_config.yml";
-    public static final String DISCORD_CONFIG_FILE = "discord_config.yml";
+import java.util.List;
+import java.util.concurrent.Future;
 
-    public static final boolean SIMPLE_LOGGING_ENABLED = true;
+import de.mas.telegramircbot.message.MessageContainer;
+import de.mas.telegramircbot.message.MessageResult;
 
-    // Will be used if no config is provided.
-    public static String IRC_SERVER = "localhost";
-    public static String IRC_LOGIN = "<login>";
-    public static String IRC_PASS = "<password>";
-    public static String IRC_NICK = "<nick>";
-    public static int IRC_PORT = 12345;
+public interface ChannelToChannelCommunication {
+    List<MessageContainer> getMessagesFrom();
 
-    public static final String PRIVATE_MESSAGES_CHANNEL_NAME = "PRIVATE_MESSAGES"; // This must not start with #
-    public static final Object MENTIONS_CHANNEL_NAME = "SERVER_MENTIONS";
-    public static String IMGUR_API_CLIENTID = "";
-    public static final String IMGUR_API_URL = "https://api.imgur.com/3/image";
+    List<Future<MessageResult>> sendMessagesToThisChannel(List<MessageContainer> msgsFrom);
+    
+    List<MessageContainer> getEditedMessagesFrom();
 
-
+    List<Future<MessageResult>> sendEditedMessagesToThisChannel(List<MessageContainer> editedMsgs);
 }

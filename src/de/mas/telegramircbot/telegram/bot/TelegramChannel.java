@@ -20,50 +20,34 @@
  * SOFTWARE.
  *******************************************************************************/
 
-package de.mas.telegramircbot.utils;
+package de.mas.telegramircbot.telegram.bot;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import de.mas.telegramircbot.common.AbstractChannel;
+import de.mas.telegramircbot.common.interfaces.MessageHandler;
+import de.mas.telegramircbot.common.interfaces.MessageSender;
+import de.mas.telegramircbot.message.Command;
 
-public class Utils {
-    public static String replacesSmileys(String s) {
-        s = s.replaceAll("\\ud83d\\ude06", "xD"); // 😆
-        s = s.replaceAll("\\ud83d\\ude4a", ":X"); // 🙊
-        s = s.replaceAll("\u2764", "<3");         // ❤️
-        return s;
+public class TelegramChannel extends AbstractChannel {
+    private final MessageSender messageSender;
+
+    protected TelegramChannel(MessageHandler messageHandler, MessageSender sender) {
+        super(messageHandler);
+        this.messageSender = sender;
     }
 
-    // To get rid of the try catch thing..
-    public static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            // And ignore the exception. ups.
-        }
+    @Override
+    public String getChannelName() {
+        return "";
     }
 
-    public static boolean isNumeric(String string) {
-        boolean isValue = false;
-        try {
-            Integer.parseInt(string);
-            isValue = true;
-        } catch (NumberFormatException e) {
-        }
-        return isValue;
+    @Override
+    protected MessageSender getMessageReceiverForSending() {
+        return messageSender;
     }
 
-    public static String escapeUsername(String username) {
-        return username.replace("@", "").replace("+", "");
+    @Override
+    protected void handleCommand(Command command) {
+        //
     }
 
-    /**
-     * 
-     * @param input
-     * @param replace
-     * @param replaceWith
-     * @return
-     */
-    public static String replaceStringInStringEscaped(String input, String replace, String replaceWith) {
-        return input.replaceAll(Pattern.quote(replace), Matcher.quoteReplacement(replaceWith));
-    }
 }
