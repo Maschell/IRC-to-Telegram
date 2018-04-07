@@ -93,7 +93,7 @@ public class TelegramChannelBot extends TelegramLongPollingBot {
     }
 
     private Message sendMessage(String string, Long chatID) throws TelegramApiException {
-        return execute(new SendMessage().setChatId(getTelegramChatID()).setText(string));
+        return execute(new SendMessage().setChatId(chatID).setText(string));
     }
 
     @Override
