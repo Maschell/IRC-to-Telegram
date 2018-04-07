@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.btobastian.javacord.entities.Channel;
-import de.btobastian.javacord.entities.Server;
 import de.mas.telegramircbot.common.interfaces.Attachment;
 import de.mas.telegramircbot.common.interfaces.Message;
 import de.mas.telegramircbot.common.interfaces.MessageHandler;
@@ -53,9 +51,10 @@ public class DefaultDiscordMessageHandler implements MessageHandler {
 
     @Override
     public MessageContainer handleEditMessageFrom(Message msg, String oldContent) {
-        de.btobastian.javacord.entities.message.Message message = (de.btobastian.javacord.entities.message.Message) msg.getInternalMessage();
+        org.javacord.api.entity.message.Message message = (org.javacord.api.entity.message.Message) msg.getInternalMessage();
         String text = DiscordUtils.getTextWithReplacedMetions(message);
-        return MessageContainer.createEditMessage(message.getId(), new User(message.getAuthor().getName(), message.getAuthor().getId()), text, oldContent);
+        return MessageContainer.createEditMessage(Long.toString(message.getId()),
+                new User(message.getAuthor().getName(), Long.toString(message.getAuthor().getId())), text, oldContent);
     }
 
     @Override
@@ -74,19 +73,14 @@ public class DefaultDiscordMessageHandler implements MessageHandler {
 
     @Override
     public MessageContainer handleTextMessageFrom(Message msg) {
-        de.btobastian.javacord.entities.message.Message message = (de.btobastian.javacord.entities.message.Message) msg.getInternalMessage();
+        org.javacord.api.entity.message.Message message = (org.javacord.api.entity.message.Message) msg.getInternalMessage();
 
         String text = DiscordUtils.getTextWithReplacedMetions(message);
 
-        Channel channel = message.getChannelReceiver();
-        Server server = null;
-        if (channel != null) {
-            server = channel.getServer();
-        }
-        String authorName = DiscordUtils.getNameForUser(message.getAuthor(), server);
+        String authorName = message.getAuthor().getDisplayName();
         String authorID = "unknown";
 
-        return MessageContainer.createTextMessageFromUser(message.getId(), new User(authorName, authorID), text);
+        return MessageContainer.createTextMessageFromUser(Long.toString(message.getId()), new User(authorName, authorID), text);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +25,13 @@ package de.mas.telegramircbot;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.server.Server;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.generics.LongPollingBot;
 
-import de.btobastian.javacord.entities.Server;
 import de.mas.telegramircbot.common.interfaces.Channel;
 import de.mas.telegramircbot.discord.client.DiscordClientInstance;
 import de.mas.telegramircbot.irc.IRCChannel;
@@ -60,12 +61,12 @@ public class Starter {
         this.botsApi = new TelegramBotsApi();
 
         if (discordConfigs != null) {
-            DiscordClientInstance discordInstance = DiscordClientInstance.startInstance(discordConfigs.getUsername(), discordConfigs.getPassword());
+            DiscordClientInstance discordInstance = DiscordClientInstance.startInstance(discordConfigs.getToken(), false);
 
             System.out.println("Available Discord Servers and Channels.");
             for (Server s : discordInstance.getServer()) {
                 System.out.println("Server: " + s);
-                for (de.btobastian.javacord.entities.Channel c : s.getChannels()) {
+                for (ServerTextChannel  c : s.getTextChannels()) {
                     System.out.println("\t\t Channel: " + c);
                 }
             }

@@ -1,4 +1,10 @@
 # IRC-to-Telegram 
+
+# TODO! Rewrite the README! It's outdated and needs to be updated.
+
+
+## OLD README
+
 IRC-to-Telegram is small tool to interact with an IRC channel via Telegram.
 This is still an early WIP and very experimental. You'll achieve the best result in combination with an IRC Bouncer (for example ZNC)
 ## How does it work  

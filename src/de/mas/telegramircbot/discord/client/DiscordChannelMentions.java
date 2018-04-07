@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,15 @@ package de.mas.telegramircbot.discord.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import de.btobastian.javacord.entities.Channel;
-import de.btobastian.javacord.entities.Server;
-import de.btobastian.javacord.entities.User;
-import de.btobastian.javacord.entities.message.Message;
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAuthor;
+import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
+
 import de.mas.telegramircbot.discord.client.common.DiscordUtils;
 import de.mas.telegramircbot.message.MessageContainer;
 
@@ -44,8 +48,8 @@ public class DiscordChannelMentions extends DiscordChannel {
     private void initWordList() {
         words.add("maschell");
         words.add("maschelldev");
-        words.add("sd cafiine");
-        words.add("sdcafiine");
+        // words.add("sd cafiine");
+        // words.add("sdcafiine");
         words.add("hid to vpad");
         words.add("hidtovpad");
         words.add("jnustool");
@@ -53,6 +57,9 @@ public class DiscordChannelMentions extends DiscordChannel {
         words.add("saviine");
         words.add("nuspacker");
         words.add("jwudtool");
+        words.add("wups");
+        words.add("wii u plugin system");
+        words.add("wiiu plugin system");
 
     }
 
@@ -62,24 +69,26 @@ public class DiscordChannelMentions extends DiscordChannel {
         if (message.getContent() != null) {
             content = DiscordUtils.getTextWithReplacedMetions(message);
         }
-        if ((message.getMentions() != null && checkMentions(message.getMentions())) || checkTextContent(content)) {
+        if ((message.getMentionedRoles() != null && checkMentionsUser(message.getMentionedUsers()))
+                || (message.getMentionedRoles() != null && checkMentionsRoles(message.getMentionedRoles())) || checkTextContent(content)) {
             String authorName = "unkwn";
-            User a = message.getAuthor();
+            MessageAuthor a = message.getAuthor();
             if (a != null && a.getName() != null) {
                 authorName = a.getName();
             }
 
-            if (message.isPrivateMessage()) {
+            if (message.getPrivateChannel().isPresent()) {
                 String msg = "Private message from " + authorName + ":" + message.getContent();
                 sendMessageTo(MessageContainer.createTextMessage("", msg));
             } else {
 
-                Channel c = message.getChannelReceiver();
+                Optional<ServerTextChannel> c = message.getServerTextChannel();
                 String channelName = "unkwn";
                 String serverName = "unkwn";
-                if (c != null && c.getName() != null) {
-                    channelName = c.getName();
-                    Server s = c.getServer();
+                if (c.isPresent() && c.get().getName() != null) {
+
+                    channelName = c.get().getName();
+                    Server s = c.get().getServer();
                     if (s != null && s.getName() != null) {
                         serverName = s.getName();
                     }
@@ -99,10 +108,21 @@ public class DiscordChannelMentions extends DiscordChannel {
         return false;
     }
 
-    private boolean checkMentions(List<User> mentions) {
+    private boolean checkMentionsUser(List<User> mentions) {
         for (User u : mentions) {
             if (u.isYourself()) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkMentionsRoles(List<Role> mentionedRoles) {
+        for (Role r : mentionedRoles) {
+            for (User u : r.getUsers()) {
+                if (u.isYourself()) {
+                    return true;
+                }
             }
         }
         return false;

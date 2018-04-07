@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +26,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import de.btobastian.javacord.entities.message.Message;
-import de.btobastian.javacord.entities.message.MessageReceiver;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.Messageable;
 import de.mas.telegramircbot.common.DefaultMessageReturned;
 import de.mas.telegramircbot.common.interfaces.MessageReturned;
 import de.mas.telegramircbot.common.interfaces.MessageSender;
 import de.mas.telegramircbot.message.Document;
 
 public class DiscordMessageSender implements MessageSender {
-    private final static Map<MessageReceiver, DiscordMessageSender> instances = new HashMap<>();
+    private final static Map<Messageable, DiscordMessageSender> instances = new HashMap<>();
 
-    public static DiscordMessageSender getInstance(MessageReceiver c) {
+    public static DiscordMessageSender getInstance(Messageable c) {
         DiscordMessageSender instance = instances.get(c);
         if (instance == null) {
             instance = new DiscordMessageSender(c);
@@ -46,15 +46,15 @@ public class DiscordMessageSender implements MessageSender {
         return instance;
     }
 
-    private final MessageReceiver receiver;
+    private final Messageable receiver;
 
-    public DiscordMessageSender(MessageReceiver receiver) {
+    public DiscordMessageSender(Messageable receiver) {
         this.receiver = receiver;
     }
 
     @Override
     public MessageReturned sendFile(Document d) throws Exception {
-        Future<Message> m = receiver.sendFile(d.getDocumentStream(), d.getFilename());
+        Future<Message> m = receiver.sendMessage(d.getDocumentStream(), d.getFilename());
         return new DefaultMessageReturned(new DiscordMessage(m.get()));
 
     }
@@ -67,8 +67,8 @@ public class DiscordMessageSender implements MessageSender {
 
     @Override
     public MessageReturned editMessage(de.mas.telegramircbot.common.interfaces.Message to, String newContent) throws Exception {
-        if (to != null && to.getInternalMessage() != null && to.getInternalMessage() instanceof de.btobastian.javacord.entities.message.Message) {
-            de.btobastian.javacord.entities.message.Message message = (de.btobastian.javacord.entities.message.Message) to.getInternalMessage();
+        if (to != null && to.getInternalMessage() != null && to.getInternalMessage() instanceof Message) {
+            Message message = (Message) to.getInternalMessage();
             message.edit(newContent).get();
         }
         return null;

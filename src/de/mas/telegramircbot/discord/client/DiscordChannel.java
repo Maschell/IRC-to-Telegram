@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,8 @@
 
 package de.mas.telegramircbot.discord.client;
 
+import org.javacord.api.entity.channel.ServerTextChannel;
+
 import de.mas.telegramircbot.common.AbstractChannel;
 import de.mas.telegramircbot.common.interfaces.MessageHandler;
 import de.mas.telegramircbot.common.interfaces.MessageSender;
@@ -30,13 +32,13 @@ import de.mas.telegramircbot.discord.client.implementations.DiscordMessageSender
 import de.mas.telegramircbot.message.Command;
 
 public class DiscordChannel extends AbstractChannel {
-    private final de.btobastian.javacord.entities.Channel discordChannel;
+    private final ServerTextChannel discordChannel;
 
-    protected DiscordChannel(de.btobastian.javacord.entities.Channel discordChannel) {
+    protected DiscordChannel(ServerTextChannel discordChannel) {
         this(discordChannel, DefaultDiscordMessageHandler.getInstance());
     }
 
-    protected DiscordChannel(de.btobastian.javacord.entities.Channel discordChannel, MessageHandler messageHandler) {
+    protected DiscordChannel(ServerTextChannel discordChannel, MessageHandler messageHandler) {
         super(messageHandler);
         this.discordChannel = discordChannel;
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,8 @@ import java.io.InputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import de.btobastian.javacord.entities.message.MessageAttachment;
+import org.javacord.api.entity.message.MessageAttachment;
+
 import de.mas.telegramircbot.common.interfaces.Attachment;
 
 public class DiscordAttachment implements Attachment {

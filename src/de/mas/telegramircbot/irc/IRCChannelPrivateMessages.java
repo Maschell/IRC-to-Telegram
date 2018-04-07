@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,6 @@ public class IRCChannelPrivateMessages extends IRCChannel {
 
     protected IRCChannelPrivateMessages(IRCServer server) {
         super(server, Settings.PRIVATE_MESSAGES_CHANNEL_NAME);
-        System.out.println("------------------------------------------- IRCChannelPrivateMessages");
     }
 
     @Getter private String usernameToRespond = "";

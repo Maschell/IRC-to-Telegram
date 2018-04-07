@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,31 +26,32 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.btobastian.javacord.entities.message.Message;
-import de.btobastian.javacord.entities.message.MessageAttachment;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAttachment;
+
 import de.mas.telegramircbot.common.interfaces.Attachment;
 import de.mas.telegramircbot.common.interfaces.MessageReturned;
 import de.mas.telegramircbot.message.User;
 
 public class DiscordMessage implements de.mas.telegramircbot.common.interfaces.Message, MessageReturned {
     private final Message message;
-    
+
     public DiscordMessage(Message m) {
         this.message = m;
     }
 
     @Override
     public Collection<Attachment> getAttachments() {
-        List<Attachment> res =  new ArrayList<>();
-        for(MessageAttachment a : message.getAttachments()){
+        List<Attachment> res = new ArrayList<>();
+        for (MessageAttachment a : message.getAttachments()) {
             res.add(new DiscordAttachment(a));
         }
         return res;
     }
 
     @Override
-    public String getID() {       
-        return message.getId();
+    public String getID() {
+        return Long.toString(message.getId());
     }
 
     @Override
@@ -69,7 +70,7 @@ public class DiscordMessage implements de.mas.telegramircbot.common.interfaces.M
     }
 
     @Override
-    public User getAuthor() {        
+    public User getAuthor() {
         return new User(message.getAuthor().getName());
     }
 

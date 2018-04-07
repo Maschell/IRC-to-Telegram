@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,23 @@ package de.mas.telegramircbot.discord.client;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-import de.btobastian.javacord.DiscordAPI;
-import de.btobastian.javacord.Javacord;
-import de.btobastian.javacord.entities.User;
-import de.btobastian.javacord.entities.message.Message;
-import de.btobastian.javacord.listener.message.MessageCreateListener;
-import de.btobastian.javacord.listener.message.MessageEditListener;
+import org.javacord.api.AccountType;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
+import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.event.message.MessageEditEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.listener.message.MessageEditListener;
+
 import de.mas.telegramircbot.common.interfaces.Channel;
 import de.mas.telegramircbot.discord.client.implementations.DiscordMessage;
 import de.mas.telegramircbot.utils.Utils;
@@ -42,26 +51,33 @@ import lombok.extern.java.Log;
 @Log
 public class DiscordClientInstance {
     @Getter private final User yourself;
-    private final DiscordAPI api;
-    private final Map<String, DiscordChannel> channelList = new HashMap<>();
+    private final DiscordApi api;
+    private final Map<Long, DiscordChannel> channelList = new HashMap<>();
     @Getter private final DiscordChannel channelPM = new DiscordChannelPrivateMessages(this);
     @Getter private final DiscordChannelMentions channelMentions = new DiscordChannelMentions();
 
-    public static DiscordClientInstance startInstance(String username, String password) {
-        return connect(Javacord.getApi(username, password));
-    }
-
     public static DiscordClientInstance startInstance(String token, boolean bot) {
-        return connect(Javacord.getApi(token, bot));
+        AccountType type = AccountType.BOT;
+        if (!bot) {
+            type = AccountType.CLIENT;
+        }
+        try {
+            return connect(new DiscordApiBuilder(), type, token);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    private static DiscordClientInstance connect(DiscordAPI api) {
-        api.connectBlocking();
-        api.setAutoReconnect(true);
-        return new DiscordClientInstance(api);
+    private static DiscordClientInstance connect(DiscordApiBuilder api, AccountType type, String token) throws InterruptedException, ExecutionException {
+        return new DiscordClientInstance(api.setAccountType(type).setToken(token).login().get());
     }
 
-    private DiscordClientInstance(DiscordAPI api) {
+    private DiscordClientInstance(DiscordApi api) {
         this.api = api;
         this.yourself = api.getYourself();
 
@@ -69,60 +85,82 @@ public class DiscordClientInstance {
     }
 
     public Channel getChannel(String channelID) {
-        de.btobastian.javacord.entities.Channel discordChannel = api.getChannelById(channelID);
-        if (discordChannel == null) {
+        Optional<ServerTextChannel> discordChannel = api.getServerTextChannelById(channelID);
+        if (!discordChannel.isPresent()) {
             log.info("Couldn't find channel with the ID: " + channelID);
             return null;
         }
 
-        DiscordChannel c = new DiscordChannel(discordChannel);
-        channelList.put(discordChannel.getId(), c);
+        ServerTextChannel dChannel = discordChannel.get();
+
+        DiscordChannel c = new DiscordChannel(dChannel);
+        channelList.put(dChannel.getId(), c);
         return c;
     }
 
     private void addMessageListener() {
-        api.registerListener(new MessageEditListener() {
+        api.addMessageEditListener(new MessageEditListener() {
             @Override
-            public void onMessageEdit(DiscordAPI api, Message message, String oldContent) {
-                if (message.isPrivateMessage()) {
+            public void onMessageEdit(MessageEditEvent event) {
+                if (!event.getMessage().isPresent()) {
+                    return;
+                }
+
+                Message message = event.getMessage().get();
+
+                String oldContent = "<null>";
+                if (event.getOldContent().isPresent()) {
+                    oldContent = event.getOldContent().get();
+                }
+
+                if (message.getPrivateChannel().isPresent()) {
                     channelPM.addEditedMessageFrom(new DiscordMessage(message), oldContent);
                     return;
                 }
 
-                DiscordChannel c = channelList.get(message.getChannelReceiver().getId());
+                DiscordChannel c = channelList.get(message.getChannel().getId());
                 if (c != null) {
                     c.addEditedMessageFrom(new DiscordMessage(message), oldContent);
                 }
 
             }
         });
-        api.registerListener(new MessageCreateListener() {
+        api.addMessageCreateListener(new MessageCreateListener() {
+
             @Override
-            public void onMessageCreate(DiscordAPI api, Message message) {
+            public void onMessageCreate(MessageCreateEvent event) {
+                Message message = event.getMessage();
+
                 channelMentions.checkAndAddMessage(message);
-                if (message.isPrivateMessage()) {
+
+                if (message.getPrivateChannel().isPresent()) {
                     if (!shouldSendMessageToTelegram(message, channelPM)) return;
                     channelPM.addMessageFrom(new DiscordMessage(message));
                     return;
                 }
 
-                DiscordChannel c = channelList.get(message.getChannelReceiver().getId());
+                DiscordChannel c = channelList.get(message.getChannel().getId());
                 if (c != null) {
                     if (!shouldSendMessageToTelegram(message, c)) return;
                     c.addMessageFrom(new DiscordMessage(message));
                 }
+
             }
         });
+
     }
 
     protected boolean isMyMessage(Message msg) {
-        return msg.getAuthor().equals(getYourself());
+        if (msg.getUserAuthor().isPresent()) {
+            return msg.getUserAuthor().get().equals(getYourself());
+        }
+        return false;
     }
 
     private boolean shouldSendMessageToTelegram(Message msg, DiscordChannel channel) {
         if (isMyMessage(msg)) {
             Utils.sleep(500); // We wait before we check if it was sent by this bot.
-            if (channel.isMessageSentByTheBot(msg)) {
+            if (channel.isMessageSentByTheBot(new DiscordMessage(msg))) {
                 log.info("The message was sent by this bot. We're ignoring it!");
                 return false;
             }
@@ -131,28 +169,33 @@ public class DiscordClientInstance {
     }
 
     public String getUserID() {
-        return api.getYourself().getId();
+        return Long.toString(api.getYourself().getId());
     }
 
-    public Collection<de.btobastian.javacord.entities.Server> getServer() {
+    public Collection<Server> getServer() {
         return api.getServers();
     }
 
-    public Collection<de.btobastian.javacord.entities.Channel> getChannels() {
-        return api.getChannels();
+    public Collection<TextChannel> getChannels() {
+        return api.getTextChannels();
     }
 
     public Collection<User> getUsers() {
-        return api.getUsers();
+        return api.getCachedUsers();
     }
 
     public User getUserByID(String userID) {
-        Future<User> future = api.getUserById(userID);
+        User user;
         try {
-            return future.get();
-        } catch (Exception e) {
-            log.warning("Error while getting a User by ID." + e.getMessage());
-            return null;
+            user = api.getUserById(userID).get();
+            return user;
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        return null;
     }
 }

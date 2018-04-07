@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,7 @@ import lombok.Data;
 
 @Data
 public class DiscordConfig {
-    private String username;
-    private String password;
+    private String token;
     private Map<String, TelegramConfig> channelList = new HashMap<>();
 
 }

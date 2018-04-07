@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ public abstract class AbstractChannel implements Channel {
         this.messageHandler = messageHandler;
     }
 
-    Map<String, Message> ownMessages = new CacheMap<String, Message>(1000);
+    Map<String, Message> ownMessages = new CacheMap<String, Message>(50);
 
     public void addOwnMessage(Message msg) {
         ownMessages.put(msg.getID(), msg);
@@ -99,8 +99,8 @@ public abstract class AbstractChannel implements Channel {
         return result;
     }
 
-    public boolean isMessageSentByTheBot(de.btobastian.javacord.entities.message.Message msg) {
-        return ownMessages.containsKey(msg.getId());
+    public boolean isMessageSentByTheBot(Message msg) {
+        return ownMessages.containsKey(msg.getID());
     }
 
     @Override

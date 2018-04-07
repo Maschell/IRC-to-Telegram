@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,31 @@
 
 package de.mas.telegramircbot.discord.client.common;
 
-import de.btobastian.javacord.entities.Channel;
-import de.btobastian.javacord.entities.Server;
-import de.btobastian.javacord.entities.User;
-import de.btobastian.javacord.entities.message.Message;
-import de.btobastian.javacord.entities.permissions.Role;
+import java.util.Optional;
+
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
+
 import de.mas.telegramircbot.utils.Utils;
 
 public class DiscordUtils {
-    public static String getNameForUser(User u) {
-        return getNameForUser(u, null);
+    /*public static String getNameForMessageAuthor(MessageAuthor u) {
+        return getNameForMessageAuthor(u, null);
+    }*/
+
+    /*
+    public static String getNameForMessageAuthor(MessageAuthor u, Server s) {
+        String authorName = "unknown";
+        if (u != null) {
+            if (u.isUser()) {
+                return u.getDisplayName();
+            }
+            authorName = u.getName();
+        }
+        return authorName;
     }
 
     public static String getNameForUser(User u, Server s) {
@@ -39,25 +54,25 @@ public class DiscordUtils {
         if (u != null) {
             authorName = u.getName();
             if (s != null) {
-                String newName = u.getNickname(s);
-                if (newName != null) {
-                    return newName + "*";
+                Optional<String> newName = u.getNickname(s);
+                if (newName.isPresent()) {
+                    return newName.get() + "*";
                 }
             }
         }
         return authorName;
-    }
-    
-    public static String getTextWithReplacedMetions(Message message){
-        Channel channel = message.getChannelReceiver();
+    }*/
+
+    public static String getTextWithReplacedMetions(Message message) {
+        Optional<ServerTextChannel> channel = message.getServerTextChannel();
         Server server = null;
-        if (channel != null) {
-            server = channel.getServer();
+        if (channel.isPresent()) {
+            server = channel.get().getServer();
         }
 
         String text = message.getContent();
-        for (de.btobastian.javacord.entities.User u : message.getMentions()) {
-            text = Utils.replaceStringInStringEscaped(text, "<@" + u.getId() + ">", "@" + DiscordUtils.getNameForUser(u, server));
+        for (User u : message.getMentionedUsers()) {
+            text = Utils.replaceStringInStringEscaped(text, "<@" + u.getId() + ">", "@" + u.getDisplayName(server));
         }
         for (Role u : message.getMentionedRoles()) {
             text = Utils.replaceStringInStringEscaped(text, "<@&" + u.getId() + ">", "@" + u.getName());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Maschell
+ * Copyright (c) 2017,2018 Maschell
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,8 @@
 
 package de.mas.telegramircbot.discord.client;
 
-import de.btobastian.javacord.entities.User;
+import org.javacord.api.entity.user.User;
+
 import de.mas.telegramircbot.common.interfaces.Message;
 import de.mas.telegramircbot.common.interfaces.MessageSender;
 import de.mas.telegramircbot.discord.client.implementations.DiscordMessageSender;
@@ -63,12 +64,12 @@ public class DiscordChannelPrivateMessages extends DiscordChannel {
     @Override
     public void addMessageFrom(Message message) {
         if (message != null) {
-            de.btobastian.javacord.entities.message.Message m = (de.btobastian.javacord.entities.message.Message) message.getInternalMessage();
+            org.javacord.api.entity.message.Message m = (org.javacord.api.entity.message.Message) message.getInternalMessage();
             if (m == null || m.getContent() == null || m.getAuthor() == null || m.getAuthor().getName() == null) {
                 log.info("Couldn't send private discord message to Telegram. Value NULL!");
             } else {
                 if (!discordInstance.isMyMessage(m)) {
-                    setSendToUser(m.getAuthor());
+                    setSendToUser(Long.toString(m.getAuthor().getId()));
                 }
             }
         }

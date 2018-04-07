@@ -88,8 +88,8 @@ public class ChannelToChannelConnection {
     private BlockingQueue<Future<MessageResult>> futureChannelToBotSentQueue = new LinkedBlockingQueue<>();
     private BlockingQueue<Future<MessageResult>> futureBotToChannelSentQueue = new LinkedBlockingQueue<>();
 
-    private Map<String, String> channelToBotMessageIDs = new CacheMap<String, String>(10000);
-    private Map<String, String> botToChannelMessageIDs = new CacheMap<String, String>(10000);
+    private Map<String, String> channelToBotMessageIDs = new CacheMap<String, String>(100);
+    private Map<String, String> botToChannelMessageIDs = new CacheMap<String, String>(100);
 
     private MessageResult getResult(Future<MessageResult> future) {
         try {
