@@ -1,5 +1,32 @@
-server: "localhost"  
-login: "login"  
-pass: "password"  
-nick: "nickname"  
-port: 123456
+!de.mas.telegramircbot.utils.config.IRCConfig
+server: "localhost"
+login: "login/freenode"
+pass: "pass"
+nick: "nick/freenode"
+port: 65432
+botConfigs:
+   "#channel1":
+      botToken: "123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR"
+      telegramChatID: 12345678
+   "#channel2":
+      botToken: "123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR"
+      telegramChatID: 12345678
+   "PRIVATE_MESSAGES":
+      botToken: "123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR"
+      telegramChatID: 12345678
+---
+server: "localhost2"
+login: "login2"
+pass: "pass2"
+nick: "nick2"
+port: 65432
+botConfigs: 
+   "#channel1":
+      botToken: "123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR"
+      telegramChatID: 12345678
+   "#channel2":
+      botToken: "123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR"
+      telegramChatID: 12345678
+   "PRIVATE_MESSAGES":
+      botToken: "123412345:AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQR"
+      telegramChatID: 12345678
