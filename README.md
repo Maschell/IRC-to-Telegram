@@ -89,10 +89,12 @@ But you can use other commands:
 -"/listuser" - Sends you a list of all people in the channel
 -"/setUser username" - Only the for "PRIVATE_MESSAGE"-channel. Sets the user to which the private will be sent.
 
-
 ## Aren't the Telegram bots public? Can everbody see my messages?  
 Telegram Bots are in fact public, but this tool only intacts with one Telegram Account which can be set for each channel.  
 All other people who try to contact the Bot will only get an error message and will never receive any other message.
+
+## Building
+`mvn clean package assembly:single`
 
 ## Credits / used technoligies
 Coding - Maschell  
