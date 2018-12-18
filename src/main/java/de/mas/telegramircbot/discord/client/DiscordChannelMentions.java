@@ -23,6 +23,7 @@
 package de.mas.telegramircbot.discord.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,32 +101,15 @@ public class DiscordChannelMentions extends DiscordChannel {
     }
 
     private boolean checkTextContent(String content) {
-        for (String s : words) {
-            if (content.toLowerCase().contains(s)) {
-                return true;
-            }
-        }
-        return false;
+        return words.stream().anyMatch(w -> content.toLowerCase().contains(w));
     }
 
-    private boolean checkMentionsUser(List<User> mentions) {
-        for (User u : mentions) {
-            if (u.isYourself()) {
-                return true;
-            }
-        }
-        return false;
+    private boolean checkMentionsUser(Collection<User> mentions) {
+        return mentions.stream().anyMatch(u -> u.isYourself());
     }
 
     private boolean checkMentionsRoles(List<Role> mentionedRoles) {
-        for (Role r : mentionedRoles) {
-            for (User u : r.getUsers()) {
-                if (u.isYourself()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return mentionedRoles.stream().anyMatch(r -> checkMentionsUser(r.getUsers()));
     }
 
 }
