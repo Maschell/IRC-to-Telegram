@@ -30,13 +30,25 @@ import lombok.Data;
 
 @Data
 public class IRCConfig {
-    private final String server;
-    private final String login;
-    private final String pass;
-    private final String nick;
-    private final int port;
+    private String server;
+    private String login;
+    private String pass;
+    private String nick;
+    private int port;
 
     Map<String, TelegramConfig> botConfigs = new HashMap<>();
+
+    public IRCConfig() {
+
+    }
+
+    public IRCConfig(String IRC_SERVER, String IRC_LOGIN, String IRC_PASS, String IRC_NICK, int IRC_PORT) {
+        this.server = IRC_SERVER;
+        this.login = IRC_LOGIN;
+        this.pass = IRC_PASS;
+        this.nick = IRC_NICK;
+        this.port = IRC_PORT;
+    }
 
     public static IRCConfig getDefaultConfig() {
         return new IRCConfig(Settings.IRC_SERVER, Settings.IRC_LOGIN, Settings.IRC_PASS, Settings.IRC_NICK, Settings.IRC_PORT);

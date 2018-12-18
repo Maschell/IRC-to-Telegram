@@ -26,6 +26,15 @@ import lombok.Data;
 
 @Data
 public class TelegramConfig {
-    private final String botToken;
-    private final long telegramChatID;
+    private String botToken;
+    private long telegramChatID;
+
+    public TelegramConfig() {
+
+    }
+
+    public TelegramConfig(String token, int id) {
+        this.botToken = token;
+        this.telegramChatID = id;
+    }
 }

@@ -22,11 +22,11 @@
 
 package de.mas.telegramircbot.telegram.bot;
 
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import de.mas.telegramircbot.common.interfaces.MessageHandler;
 import de.mas.telegramircbot.message.MessageStrings;
@@ -77,7 +77,7 @@ public class TelegramChannelBot extends TelegramLongPollingBot {
                 return;
             }
 
-            org.telegram.telegrambots.api.objects.Message message = update.getMessage();
+            org.telegram.telegrambots.meta.api.objects.Message message = update.getMessage();
 
             if (update.hasEditedMessage()) {
                 channel.addEditedMessageFrom(new TelegramMessage(update.getEditedMessage(), this), "");

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 import de.mas.telegramircbot.common.interfaces.Attachment;
 import de.mas.telegramircbot.common.interfaces.MessageHandler;

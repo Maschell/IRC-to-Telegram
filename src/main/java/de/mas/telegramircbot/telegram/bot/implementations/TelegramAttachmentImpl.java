@@ -25,16 +25,16 @@ package de.mas.telegramircbot.telegram.bot.implementations;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.telegram.telegrambots.api.interfaces.BotApiObject;
-import org.telegram.telegrambots.api.objects.Audio;
-import org.telegram.telegrambots.api.objects.Document;
-import org.telegram.telegrambots.api.objects.Location;
-import org.telegram.telegrambots.api.objects.PhotoSize;
-import org.telegram.telegrambots.api.objects.Video;
-import org.telegram.telegrambots.api.objects.VideoNote;
-import org.telegram.telegrambots.api.objects.Voice;
-import org.telegram.telegrambots.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
+import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
+import org.telegram.telegrambots.meta.api.objects.Audio;
+import org.telegram.telegrambots.meta.api.objects.Document;
+import org.telegram.telegrambots.meta.api.objects.Location;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+import org.telegram.telegrambots.meta.api.objects.Video;
+import org.telegram.telegrambots.meta.api.objects.VideoNote;
+import org.telegram.telegrambots.meta.api.objects.Voice;
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 
 import de.mas.telegramircbot.common.interfaces.Attachment;
 import de.mas.telegramircbot.telegram.common.TelegramUtils;

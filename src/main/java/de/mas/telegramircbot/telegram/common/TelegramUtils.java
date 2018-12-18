@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.telegram.telegrambots.api.methods.GetFile;
-import org.telegram.telegrambots.api.objects.File;
-import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.google.common.io.Files;
 
@@ -75,10 +75,9 @@ final public class TelegramUtils {
             GetFile getFileRequest = new GetFile();
 
             getFileRequest.setFileId(fileID);
-            @SuppressWarnings("deprecation")
-            File file = telegramChannel.getFile(getFileRequest);
+            File uploadedFilePath = telegramChannel.execute(getFileRequest);
 
-            java.io.File fileFromSystem = telegramChannel.downloadFile(file.getFilePath());
+            java.io.File fileFromSystem = telegramChannel.downloadFile(uploadedFilePath.getFilePath());
 
             byte[] bytes = Files.toByteArray(fileFromSystem);
             return bytes;

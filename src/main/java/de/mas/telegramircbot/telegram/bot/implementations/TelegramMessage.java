@@ -26,12 +26,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.telegram.telegrambots.api.objects.Audio;
-import org.telegram.telegrambots.api.objects.Video;
-import org.telegram.telegrambots.api.objects.VideoNote;
-import org.telegram.telegrambots.api.objects.Voice;
-import org.telegram.telegrambots.api.objects.stickers.Sticker;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
+import org.telegram.telegrambots.meta.api.objects.Audio;
+import org.telegram.telegrambots.meta.api.objects.Video;
+import org.telegram.telegrambots.meta.api.objects.VideoNote;
+import org.telegram.telegrambots.meta.api.objects.Voice;
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 
 import de.mas.telegramircbot.common.interfaces.Attachment;
 import de.mas.telegramircbot.common.interfaces.Message;
@@ -39,10 +39,10 @@ import de.mas.telegramircbot.message.User;
 import de.mas.telegramircbot.telegram.common.TelegramUtils;
 
 public class TelegramMessage implements Message {
-    private final org.telegram.telegrambots.api.objects.Message message;
+    private final org.telegram.telegrambots.meta.api.objects.Message message;
     private final DefaultAbsSender absSender;
 
-    public TelegramMessage(org.telegram.telegrambots.api.objects.Message message, DefaultAbsSender absSender) {
+    public TelegramMessage(org.telegram.telegrambots.meta.api.objects.Message message, DefaultAbsSender absSender) {
         this.message = message;
         this.absSender = absSender;
     }

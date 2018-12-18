@@ -24,12 +24,12 @@ package de.mas.telegramircbot.telegram.bot.implementations;
 
 import java.io.InputStream;
 
-import org.telegram.telegrambots.api.methods.send.SendDocument;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.api.methods.send.SendVideo;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import de.mas.telegramircbot.common.DefaultMessageReturned;
 import de.mas.telegramircbot.common.interfaces.Message;
@@ -46,22 +46,22 @@ public class TelegramMessageSender implements MessageSender {
         channel = telegramChannelBot;
     }
 
-    private org.telegram.telegrambots.api.objects.Message sendDocument(String filename, InputStream in, User author) throws TelegramApiException {
+    private org.telegram.telegrambots.meta.api.objects.Message sendDocument(String filename, InputStream in, User author) throws TelegramApiException {
         String caption = "";
         if(author != null && author.getName() != null)  caption = "From: " + author.getName();
-        return channel.sendDocument(new SendDocument().setChatId(channel.getTelegramChatID()).setNewDocument(filename, in).setCaption(caption));
+        return channel.execute(new SendDocument().setChatId(channel.getTelegramChatID()).setDocument(filename, in).setCaption(caption));
     }
 
-    private org.telegram.telegrambots.api.objects.Message sendPhoto(String filename, InputStream in, User author) throws TelegramApiException {
+    private org.telegram.telegrambots.meta.api.objects.Message sendPhoto(String filename, InputStream in, User author) throws TelegramApiException {
         String caption = "";
         if(author != null && author.getName() != null)  caption = "From: " + author.getName();
-        return channel.sendPhoto(new SendPhoto().setChatId(channel.getTelegramChatID()).setNewPhoto(filename, in).setCaption(caption));
+        return channel.execute(new SendPhoto().setChatId(channel.getTelegramChatID()).setPhoto(filename, in).setCaption(caption));
     }
 
-    private org.telegram.telegrambots.api.objects.Message sendVideo(String filename, InputStream in, User author) throws TelegramApiException {
+    private org.telegram.telegrambots.meta.api.objects.Message sendVideo(String filename, InputStream in, User author) throws TelegramApiException {
         String caption = "";
         if(author != null && author.getName() != null)  caption = "From: " + author.getName();
-        return channel.sendVideo(new SendVideo().setChatId(channel.getTelegramChatID()).setNewVideo(filename, in).setCaption(caption));
+        return channel.execute(new SendVideo().setChatId(channel.getTelegramChatID()).setVideo(filename, in).setCaption(caption));
     }
 
     @Override

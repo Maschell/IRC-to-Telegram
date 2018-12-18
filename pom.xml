@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>IRC-to-Telegram</groupId>
@@ -30,16 +31,8 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>jitpack.io</id>           <!-- JitPack allows github repo to be used as a maven repo -->
-			<url>https://jitpack.io</url> <!-- For documentation: http://jitpack.io/ -->
-		</repository>
-	</repositories>
-
 	<dependencies>
-		
+
 		<!-- A SLF4J compatible logging framework. I would recommend to use logback -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -49,17 +42,17 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.20</version>
+			<version>1.18.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.telegram</groupId>
 			<artifactId>telegrambots</artifactId>
-			<version>3.5</version>
+			<version>4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.telegram</groupId>
 			<artifactId>telegrambotsextensions</artifactId>
-			<version>3.5</version>
+			<version>4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.esotericsoftware.yamlbeans</groupId>
@@ -69,13 +62,13 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.8.2</version>
+			<version>2.8.5</version>
 		</dependency>
-		
 		<dependency>
-			<groupId>com.github.BtoBastian</groupId>
-			<artifactId>Javacord</artifactId>
-			<version>3ccb30a</version>
+			<groupId>org.javacord</groupId>
+			<artifactId>javacord</artifactId>
+			<version>3.0.1</version>
+			<type>pom</type>
 		</dependency>
 	</dependencies>
 </project>

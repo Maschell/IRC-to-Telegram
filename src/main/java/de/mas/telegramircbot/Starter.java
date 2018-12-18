@@ -28,9 +28,9 @@ import java.util.Map.Entry;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.generics.LongPollingBot;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.generics.LongPollingBot;
 
 import de.mas.telegramircbot.common.interfaces.Channel;
 import de.mas.telegramircbot.discord.client.DiscordClientInstance;
@@ -66,7 +66,7 @@ public class Starter {
             System.out.println("Available Discord Servers and Channels.");
             for (Server s : discordInstance.getServer()) {
                 System.out.println("Server: " + s);
-                for (ServerTextChannel  c : s.getTextChannels()) {
+                for (ServerTextChannel c : s.getTextChannels()) {
                     System.out.println("\t\t Channel: " + c);
                 }
             }
@@ -84,6 +84,7 @@ public class Starter {
                 if (channelID.equals(Settings.MENTIONS_CHANNEL_NAME)) {
                     log.info("Register Bot for Discord Mentions");
                     Channel MentionsChannel = discordInstance.getChannelMentions();
+
                     TelegramChannelBot bot = new TelegramChannelBot(config.getBotToken(), config.getTelegramChatID());
                     registerTelegramBot(bot);
                     ChannelToChannelConnection con = new ChannelToChannelConnection(MentionsChannel, bot.getChannel());
@@ -123,7 +124,7 @@ public class Starter {
     private void registerTelegramBot(LongPollingBot bot) {
         try {
             botsApi.registerBot(bot);
-        } catch (TelegramApiRequestException e) {           
+        } catch (TelegramApiRequestException e) {
             log.info("Error registrating the bot" + e.getMessage());
         }
     }
